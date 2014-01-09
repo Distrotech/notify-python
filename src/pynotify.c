@@ -165,19 +165,10 @@ _wrap_notify_notification_new(PyGObject *self, PyObject *args, PyObject *kwargs)
     static char *kwlist[] = { "summary", "message", "icon", "attach", NULL };
     char *summary, *message = NULL, *icon = NULL;
     PyGObject *py_attach = NULL;
-    GtkWidget *attach = NULL;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|zzO:NotifyNotification.__init__", kwlist, &summary, &message, &icon, &py_attach))
         return -1;
-    if ((PyObject *)py_attach == Py_None)
-        attach = NULL;
-    else if (py_attach && pygobject_check(py_attach, &PyGtkWidget_Type))
-        attach = GTK_WIDGET(py_attach->obj);
-    else if (py_attach) {
-        PyErr_SetString(PyExc_TypeError, "attach should be a GtkWidget or None");
-        return -1;
-    }
-    self->obj = (GObject *)notify_notification_new(summary, message, icon, attach);
+    self->obj = (GObject *)notify_notification_new(summary, message, icon);
 
     if (!self->obj) {
         PyErr_SetString(PyExc_RuntimeError, "could not create NotifyNotification object");
